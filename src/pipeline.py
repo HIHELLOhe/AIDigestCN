@@ -388,7 +388,10 @@ def _call_openai(prompt: str, api_key: str) -> str:
     调用 OpenAI Chat Completions API，返回模型的原始文本响应。
     此函数是可 mock 的最小单元，不含重试逻辑。
     """
-    client = OpenAI(api_key=api_key)
+    client = OpenAI(
+    api_key=api_key,
+    base_url="https://api.deepseek.com/v1"
+    )
     response = client.chat.completions.create(
         model=OPENAI_MODEL,
         messages=[{"role": "user", "content": prompt}],
