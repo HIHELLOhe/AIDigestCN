@@ -70,7 +70,8 @@ SKIP_PURE_REPOSTS = os.environ.get("SKIP_PURE_REPOSTS", "true").lower() == "true
 
 # OpenAI 配置
 # gpt-4o-mini 具有较高的速率限制配额，适合批量翻译场景
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "deepseek-chat")
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.deepseek.com/v1")
 # 每批翻译的推文数量（减少 API 调用次数，降低触发速率限制的风险）
 TRANSLATE_BATCH_SIZE = int(os.environ.get("TRANSLATE_BATCH_SIZE", "10"))
 
@@ -384,13 +385,9 @@ def parse_llm_output(text: str, original: str) -> dict[str, str]:
 
 
 def _call_openai(prompt: str, api_key: str) -> str:
-    """
-    调用 OpenAI Chat Completions API，返回模型的原始文本响应。
-    此函数是可 mock 的最小单元，不含重试逻辑。
-    """
     client = OpenAI(
-    api_key=api_key,
-    base_url="https://api.deepseek.com/v1"
+        api_key=api_key,
+        base_url=OPENAI_BASE_URL,
     )
     response = client.chat.completions.create(
         model=OPENAI_MODEL,
